@@ -163,41 +163,23 @@ else if(digits.startsWith('0')&&digits.length>=10)digits='2'+digits;
 return digits;
 }
 
-/* إصلاح المشاركة: فتح واتساب العادي بحزمة com.whatsapp */
-function shareWhatsAppMessage(message){
+/* مشاركة واتساب العادي من نسخة APK */
+async function shareWhatsAppMessage(message){
 
-const encoded=encodeURIComponent(message);
-const ua=navigator.userAgent||'';
-let shareUrl='';
+const whatsappPlugin=window.Capacitor &&
+window.Capacitor.Plugins &&
+window.Capacitor.Plugins.WhatsApp;
 
-if(/Android/i.test(ua)){
-shareUrl='intent://send?text='+encoded+
-'#Intent;scheme=whatsapp;package=com.whatsapp;end';
-
-}else if(/iPhone|iPad|iPod/i.test(ua)){
-shareUrl='whatsapp://send?text='+encoded;
-
-}else{
-shareUrl='https://web.whatsapp.com/send?text='+encoded;
-}
-
-const link=document.createElement('a');
-link.href=shareUrl;
-link.target='_blank';
-link.rel='noopener';
-link.style.display='none';
-
-document.body.appendChild(link);
-
+if(whatsappPlugin && typeof whatsappPlugin.share==='function'){
 try{
-link.click();
+await whatsappPlugin.share({text:message});
 }catch(error){
-alert('تعذر فتح واتساب. تأكد من تثبيت واتساب العادي.');
+alert(error && error.message ? error.message : 'تعذر فتح واتساب العادي. تأكد من تثبيته.');
+}
+return;
 }
 
-setTimeout(()=>{
-link.remove();
-},1500);
+alert('المشاركة المباشرة متاحة في نسخة APK المحدّثة.');
 }
 
 function render(){
