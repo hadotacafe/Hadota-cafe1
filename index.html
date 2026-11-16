@@ -108,13 +108,14 @@ function normalizePhone(value){
  return digits;
 }
 function shareWhatsAppMessage(message){
- const url='https://wa.me/?text='+encodeURIComponent(message);
- if(navigator.share){
-  navigator.share({text:message}).catch(err=>{
-   if(err && err.name!=='AbortError') window.location.href=url;
-  });
- }else{
-  window.location.href=url;
+ const encoded=encodeURIComponent(message);
+ // Android intent يحدد تطبيق واتساب العادي صراحةً (وليس WhatsApp Business).
+ const normalWhatsAppIntent='intent://send?text='+encoded+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
+ const webFallback='https://api.whatsapp.com/send?text='+encoded;
+ try {
+  window.location.href=normalWhatsAppIntent;
+ } catch (err) {
+  window.location.href=webFallback;
  }
 }
 document.addEventListener('click',ev=>{
@@ -126,7 +127,7 @@ document.addEventListener('click',ev=>{
  if(t.dataset.collect!==undefined){let i=+t.dataset.collect,e=state.employees[i];if(!e.collected){e.collected=true;state.payments.push({name:e.name,amount:50,time:new Date().toISOString()});save();render()}else alert('تم تسجيل تحصيل 50 جنيه لهذا الموظف اليوم بالفعل.')}
  if(t.dataset.edit!==undefined){editing=+t.dataset.edit;document.getElementById('nameInput').value=state.employees[editing].name;document.getElementById('phoneInput').value=state.employees[editing].phone||'';document.getElementById('editDialog').showModal()}
  if(t.dataset.delete!==undefined){let i=+t.dataset.delete;if(state.employees.length<=1){alert('لازم يفضل موظف واحد على الأقل.');return}if(confirm('متأكد من حذف '+state.employees[i].name+'؟')){state.employees.splice(i,1);save();render()}}
- if(t.dataset.shareEmployee!==undefined){let e=state.employees[+t.dataset.shareEmployee];let phone=normalizePhone(e.phone);if(!phone){alert('أضف رقم موبايل الموظف أولاً من قائمة الخيارات ⋮.');return}let seconds=elapsed(e),delay=Math.max(0,seconds-3600);let message='☕ Hadota cafe\nوقت البريك: '+fmt(seconds)+'\nوقت التأخير المستحق للخصم: '+fmt(delay)+'\n'+(e.collected?'تم تسجيل تحصيل 50 جنيه':'لم يتم تسجيل تحصيل 50 جنيه');window.location.href='intent://send/?phone='+phone+'&text='+encodeURIComponent(message)+'#Intent;scheme=whatsapp;package=com.whatsapp;end'}
+ if(t.dataset.shareEmployee!==undefined){let e=state.employees[+t.dataset.shareEmployee];let seconds=elapsed(e),delay=Math.max(0,seconds-3600);let message='☕ Hadota cafe 1\nتقرير الموظف: '+e.name+'\nوقت البريك: '+fmt(seconds)+'\nوقت التأخير المستحق للخصم: '+fmt(delay)+'\n'+(e.collected?'تم تسجيل تحصيل 50 جنيه':'لم يتم تسجيل تحصيل 50 جنيه');shareWhatsAppMessage(message)}
 });
 document.getElementById('addEmployee').onclick=()=>{let name=prompt('اكتب اسم الموظف الجديد:');if(name&&name.trim()){state.employees.push({name:name.trim(),phone:'',seconds:0,running:false,startedAt:null,collected:false,overrunCharged:false});save();render()}};
 let editing=0;
