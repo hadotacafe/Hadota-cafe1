@@ -192,7 +192,7 @@ let message='☕ Hadota cafe\n'+
 'وقت البريك: '+fmt(seconds)+'\n'+
 'وقت التأخير المستحق للخصم: '+fmt(delay)+'\n'+
 (e.collected?'تم تسجيل تحصيل 50 جنيه':'لم يتم تسجيل تحصيل 50 جنيه');
-window.location.href='https://wa.me/'+phone+'?text='+encodeURIComponent(message)
+window.location.href='intent://send?phone='+phone+'&text='+encodeURIComponent(message)+'#Intent;scheme=whatsapp;package=com.whatsapp;end'
 }
 });
 document.getElementById('addEmployee').onclick=()=>{
