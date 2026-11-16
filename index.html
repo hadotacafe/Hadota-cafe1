@@ -73,7 +73,7 @@ function today(){return new Date().toLocaleDateString('en-CA')}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function elapsed(e){return e.seconds+(e.running&&e.startedAt?Math.floor((Date.now()-e.startedAt)/1000):0)}
 function fmt(s){s=Math.max(0,s);let h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;return [h,m,sec].map(v=>String(v).padStart(2,'0')).join(':')}
-function rollover(){if(state.day!==today()){state.day=today();state.payments=[];state.employees.forEach(e=>{e.collected=false;e.overrunCharged=false});save()}}
+function rollover(){if(state.day!==today()){state.day=today();state.payments=[];state.employees.forEach(e=>{e.collected=false;e.overrunCharged=false}) ;save()}}
 function render(){
  rollover();let root=document.getElementById('employees');root.innerHTML='';
  state.employees.forEach((e,i)=>{
@@ -100,7 +100,7 @@ document.addEventListener('click',ev=>{
  if(t.dataset.collect!==undefined){let i=+t.dataset.collect,e=state.employees[i];if(!e.collected){e.collected=true;state.payments.push({name:e.name,amount:50,time:new Date().toISOString()});save();render()}else alert('تم تسجيل تحصيل 50 جنيه لهذا الموظف اليوم بالفعل.')}
  if(t.dataset.edit!==undefined){editing=+t.dataset.edit;document.getElementById('nameInput').value=state.employees[editing].name;document.getElementById('editDialog').showModal()}
  if(t.dataset.delete!==undefined){let i=+t.dataset.delete;if(state.employees.length<=1){alert('لازم يفضل موظف واحد على الأقل.');return}if(confirm('متأكد من حذف '+state.employees[i].name+'؟')){state.employees.splice(i,1);save();render()}}
- if(t.dataset.shareEmployee!==undefined){let e=state.employees[+t.dataset.shareEmployee];let seconds=elapsed(e),delay=Math.max(0,seconds-3600);let message='وقت البريك: '+fmt(seconds)+'\nوقت التأخير المستحق للخصم: '+fmt(delay)+'\n'+(e.collected?'تم خصم منك 50 ج':'لم يتم خصم منك 50 ج');window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank')}
+ if(t.dataset.shareEmployee!==undefined){let e=state.employees[+t.dataset.shareEmployee];let seconds=elapsed(e),delay=Math.max(0,seconds-3600);let message='وقت البريك: '+fmt(seconds)+'\\nوقت التأخير المستحق للخصم: '+fmt(delay)+'\\n'+(e.collected?'تم خصم منك 50 ج':'لم يتم خصم منك 50 ج');window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank')}
 });
 document.getElementById('addEmployee').onclick=()=>{let name=prompt('اكتب اسم الموظف الجديد:');if(name&&name.trim()){state.employees.push({name:name.trim(),seconds:0,running:false,startedAt:null,collected:false,overrunCharged:false});save();render()}};
 let editing=0;
@@ -116,6 +116,7 @@ document.getElementById('share').onclick=()=>{
  let msg=encodeURIComponent(lines.join('\n'));window.open('https://wa.me/?text='+msg,'_blank');
 };
 document.getElementById('clear').onclick=()=>{if(confirm('متأكد من تصفير تقرير اليوم؟')){state.payments=[];state.employees.forEach(e=>e.collected=false);save();render()}};
+
 document.getElementById('backup').onclick=()=>{
  const payload={app:'Hadota cafe 1',version:1,createdAt:new Date().toISOString(),state};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -137,5 +138,4 @@ document.getElementById('restoreFile').onchange=async(ev)=>{
 };
 render();setInterval(render,1000);
 </script>
-</body>
-</html>
+</body></html>
