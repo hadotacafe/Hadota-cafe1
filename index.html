@@ -8,101 +8,515 @@
 <title>Hadota cafe 1</title>
 <style>
 :root{--bg:#0d1311;--card:#171f1c;--ink:#edf3ef;--muted:#a1afa7;--green:#247a55;--gold:#d6a84f;--red:#ff7770;--line:#2b3932}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,Tahoma,Arial}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,Tahoma,Arial}
 header{background:linear-gradient(135deg,#080e0c,#193d2d);padding:24px 18px;color:white;border-radius:0 0 22px 22px}
-.brand{font-size:23px;font-weight:800}.sub{color:#c5d8cc;font-size:13px;margin-top:4px}
+.brand{font-size:23px;font-weight:800}
+.sub{color:#c5d8cc;font-size:13px;margin-top:4px}
 main{max-width:760px;margin:auto;padding:16px 13px 36px}
 .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .stat,.employee,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px;margin:10px 0}
-.stat{text-align:center}.stat strong{display:block;font-size:21px}.stat span,.hint,.status,.timer-label,.emp-meta,.note{color:var(--muted);font-size:11px}
+.stat{text-align:center}
+.stat strong{display:block;font-size:21px}
+.stat span,.hint,.status,.timer-label,.emp-meta,.note{color:var(--muted);font-size:11px}
 .section-head,.emp-head,.timer-row,.report-line{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.section-head{margin:20px 2px 10px}.section-head h2{font-size:17px}
-.name-wrap{display:flex;align-items:center;gap:9px}.avatar{width:37px;height:37px;border-radius:12px;background:#203b2d;color:#8fe0b2;display:grid;place-items:center}
-.name{font-weight:750}.employee-menu{position:relative}
-.menu-trigger{border:0;background:#26332c;color:white;border-radius:10px;width:40px;height:38px;font-size:25px}
-.menu-items{position:absolute;z-index:5;left:0;top:42px;min-width:145px;padding:6px;background:#202b25;border:1px solid #3b4b42;border-radius:11px;display:grid;gap:5px}
+.section-head{margin:20px 2px 10px}
+.section-head h2{font-size:17px}
+.name-wrap{display:flex;align-items:center;gap:9px}
+.avatar{width:37px;height:37px;border-radius:12px;background:#203b2d;color:#8fe0b2;display:grid;place-items:center}
+.name{font-weight:750}
+.employee-menu{position:relative;z-index:2}
+.menu-trigger{border:0;background:#26332c;color:white;border-radius:10px;width:44px;height:42px;font-size:25px;touch-action:manipulation}
+.menu-items{position:absolute;z-index:20;left:0;top:46px;min-width:160px;padding:7px;background:#202b25;border:1px solid #3b4b42;border-radius:11px;display:grid;gap:6px;box-shadow:0 8px 22px #0009}
 .menu-items[hidden]{display:none}
-.edit{border:0;background:#26332c;color:#e2ebe5;border-radius:9px;padding:10px;text-align:right}
+.edit{border:0;background:#26332c;color:#e2ebe5;border-radius:9px;padding:12px;text-align:right;width:100%;min-height:43px}
+.edit:active,.menu-trigger:active{background:#365342}
 .timer-row{margin:13px 0 10px;padding:11px;background:#202a25;border-radius:12px}
-.timer{font-size:27px;font-weight:800;direction:ltr}.timer.over{color:var(--red)}
+.timer{font-size:27px;font-weight:800;direction:ltr}
+.timer.over{color:var(--red)}
 .actions{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:11px}
-button{font:inherit;cursor:pointer}.btn{border:0;border-radius:10px;padding:11px 6px;font-size:12px;font-weight:700}
-.start,.primary{background:var(--green);color:white}.reset,.secondary{background:#29352e;color:#e0e9e3}
-.collect{background:#45371d;color:#f4d58c}.collect.done{background:#1d3b2a;color:#a8e3b9}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+.btn{border:0;border-radius:10px;padding:11px 6px;font-size:12px;font-weight:700}
+.start,.primary{background:var(--green);color:white}
+.reset,.secondary{background:#29352e;color:#e0e9e3}
+.collect{background:#45371d;color:#f4d58c}
+.collect.done{background:#1d3b2a;color:#a8e3b9}
 .report-line{padding:8px 0;border-bottom:1px solid var(--line)}
-.report-actions{display:flex;gap:8px;margin-top:12px}.report-actions button{flex:1}
-.note{line-height:1.7}footer{text-align:center;color:#7f9086;padding:18px}
-dialog{background:#1a2420;color:white;border:1px solid var(--line);border-radius:16px;width:90%;padding:18px}
+.report-actions{display:flex;gap:8px;margin-top:12px}
+.report-actions button{flex:1}
+.note{line-height:1.7}
+footer{text-align:center;color:#7f9086;padding:18px}
+dialog{background:#1a2420;color:white;border:1px solid var(--line);border-radius:16px;width:90%;max-width:400px;padding:18px}
 dialog::backdrop{background:#000a}
-input{background:#111a16;color:white;width:100%;padding:12px;border:1px solid #3a4a40;border-radius:10px}
+input{background:#111a16;color:white;width:100%;padding:12px;border:1px solid #3a4a40;border-radius:10px;font:inherit}
 @media(min-width:620px){.employees{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
 </style>
 </head>
 <body>
-<header><div class="brand">Hadota cafe 1</div><div class="sub">إدارة البريكات والتحصيل</div></header>
+
+<header>
+<div class="brand">Hadota cafe 1</div>
+<div class="sub">إدارة البريكات والتحصيل</div>
+</header>
+
 <main>
 <div class="summary">
 <div class="stat"><strong id="count">9</strong><span>عدد الموظفين</span></div>
 <div class="stat"><strong id="active">0</strong><span>بريك شغال</span></div>
 <div class="stat"><strong id="paid">0</strong><span>تحصيل اليوم (جنيه)</span></div>
 </div>
-<div class="section-head"><h2>الموظفون</h2><button class="btn start" id="addEmployee">+ إضافة موظف</button></div>
+
+<div class="section-head">
+<h2>الموظفون</h2>
+<button class="btn start" id="addEmployee">+ إضافة موظف</button>
+</div>
+
 <div class="hint">الوقت المسموح: 60 دقيقة لكل موظف</div>
 <div class="employees" id="employees"></div>
+
 <div class="panel">
 <h3>ملخص تحصيل اليوم</h3>
 <div class="report-line"><span>عدد مرات التحصيل</span><strong id="payments">0</strong></div>
 <div class="report-line"><span>إجمالي المبلغ المحصل</span><strong><span id="total">0</span> جنيه</strong></div>
 <div class="report-line"><span>المتبقي</span><strong id="remaining">0 جنيه</strong></div>
-<div class="report-actions"><button class="btn primary" id="share">مشاركة تقرير اليوم</button><button class="btn secondary" id="clear">تصفير تقرير اليوم</button></div>
-<div class="report-actions"><button class="btn secondary" id="backup">تنزيل نسخة احتياطية</button><button class="btn secondary" id="restore">استعادة نسخة احتياطية</button></div>
+
+<div class="report-actions">
+<button class="btn primary" id="share">مشاركة تقرير اليوم</button>
+<button class="btn secondary" id="clear">تصفير تقرير اليوم</button>
+</div>
+
+<div class="report-actions">
+<button class="btn secondary" id="backup">تنزيل نسخة احتياطية</button>
+<button class="btn secondary" id="restore">استعادة نسخة احتياطية</button>
+</div>
+
 <input id="restoreFile" type="file" accept="application/json" hidden>
 </div>
 </main>
+
 <footer>Hadota cafe 1</footer>
-<dialog id="editDialog"><h3>تعديل اسم الموظف</h3><input id="nameInput" maxlength="28"><div class="report-actions"><button class="btn primary" id="saveName">حفظ</button><button class="btn secondary" id="cancelName">إلغاء</button></div></dialog>
+
+<dialog id="editDialog">
+<h3>تعديل اسم الموظف</h3>
+<input id="nameInput" maxlength="28" placeholder="اكتب اسم الموظف">
+<div class="report-actions">
+<button class="btn primary" id="saveName">حفظ</button>
+<button class="btn secondary" id="cancelName">إلغاء</button>
+</div>
+</dialog>
+
 <script>
 const KEY='hadota_cafe_1_demo_v1';
-const defaultState={employees:Array.from({length:9},(_,i)=>({name:'موظف '+(i+1),seconds:0,running:false,startedAt:null,collected:false,overrunCharged:false})),payments:[],day:new Date().toLocaleDateString('en-CA')};
-let state;try{state=JSON.parse(localStorage.getItem(KEY))||defaultState}catch(e){state=defaultState}
-function today(){return new Date().toLocaleDateString('en-CA')}
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function elapsed(e){return e.seconds+(e.running&&e.startedAt?Math.floor((Date.now()-e.startedAt)/1000):0)}
-function fmt(s){s=Math.max(0,s);let h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;return [h,m,sec].map(v=>String(v).padStart(2,'0')).join(':')}
-function rollover(){if(state.day!==today()){state.day=today();state.payments=[];state.employees.forEach(e=>{e.collected=false;e.overrunCharged=false});save()}}
-function render(){
-rollover();let root=document.getElementById('employees');root.innerHTML='';
-state.employees.forEach((e,i)=>{
-let sec=elapsed(e),over=sec>3600,card=document.createElement('section');card.className='employee';
-card.innerHTML=`<div class="emp-head"><div class="name-wrap"><div class="avatar">${i+1}</div><div><div class="name"></div><div class="status">${e.running?'البريك شغال الآن':over?'تجاوز الوقت المسموح':'متاح'}</div></div></div><div class="employee-menu"><button class="menu-trigger" data-menu="${i}">⋮</button><div class="menu-items" data-menu-items="${i}" hidden><button class="edit" data-edit="${i}">تعديل الاسم</button><button class="edit" style="color:#ff8b84" data-delete="${i}">حذف الموظف</button></div></div></div>
-<div class="timer-row"><div><div class="timer-label">وقت البريك</div><div class="timer ${over?'over':''}">${fmt(sec)}</div></div><div class="emp-meta">المسموح 01:00:00<br>${over?'تجاوز الوقت':'داخل الوقت'}</div></div>
-<div class="actions"><button class="btn start" data-toggle="${i}">${e.running?'إيقاف البريك':'بدء البريك'}</button><button class="btn reset" data-reset="${i}">تصفير الوقت</button><button class="btn collect ${e.collected?'done':''}" data-collect="${i}">${e.collected?'تم التحصيل ✓':'تحصيل 50 جنيه'}</button><button class="btn secondary" data-share-employee="${i}">مشاركة الوقت والتأخير</button></div>`;
-card.querySelector('.name').textContent=e.name;root.appendChild(card);
-});
-let active=state.employees.filter(e=>e.running).length,paid=state.payments.reduce((a,p)=>a+p.amount,0);
-count.textContent=state.employees.length;document.getElementById('active').textContent=active;document.getElementById('paid').textContent=paid;payments.textContent=state.payments.length;total.textContent=paid;remaining.textContent='0 جنيه';
+
+const defaultState={
+employees:Array.from({length:9},(_,i)=>({
+name:'موظف '+(i+1),
+seconds:0,
+running:false,
+startedAt:null,
+collected:false,
+overrunCharged:false
+})),
+payments:[],
+day:new Date().toLocaleDateString('en-CA')
+};
+
+let state;
+try{
+state=JSON.parse(localStorage.getItem(KEY))||defaultState;
+}catch(e){
+state=defaultState;
 }
+
+const $=id=>document.getElementById(id);
+
+function today(){
+return new Date().toLocaleDateString('en-CA');
+}
+
+function save(){
+localStorage.setItem(KEY,JSON.stringify(state));
+}
+
+function elapsed(e){
+return e.seconds+(e.running&&e.startedAt?
+Math.floor((Date.now()-e.startedAt)/1000):0);
+}
+
+function fmt(s){
+s=Math.max(0,s);
+let h=Math.floor(s/3600);
+let m=Math.floor(s%3600/60);
+let sec=s%60;
+return [h,m,sec].map(v=>String(v).padStart(2,'0')).join(':');
+}
+
+function rollover(){
+if(state.day!==today()){
+state.day=today();
+state.payments=[];
+state.employees.forEach(e=>{
+e.collected=false;
+e.overrunCharged=false;
+});
+save();
+}
+}
+
+// تحديث الأرقام والوقت فقط بدون إعادة بناء الموظفين
+function updateLiveUI(){
+rollover();
+
+let active=state.employees.filter(e=>e.running).length;
+let paid=state.payments.reduce((a,p)=>a+p.amount,0);
+
+$('count').textContent=state.employees.length;
+$('active').textContent=active;
+$('paid').textContent=paid;
+$('payments').textContent=state.payments.length;
+$('total').textContent=paid;
+$('remaining').textContent='0 جنيه';
+
+state.employees.forEach((e,i)=>{
+let card=document.querySelector('[data-employee="'+i+'"]');
+if(!card)return;
+
+let sec=elapsed(e);
+let over=sec>3600;
+
+let timer=card.querySelector('[data-timer]');
+let status=card.querySelector('[data-status]');
+let meta=card.querySelector('[data-meta]');
+
+if(timer){
+timer.textContent=fmt(sec);
+timer.classList.toggle('over',over);
+}
+
+if(status){
+status.textContent=e.running?'البريك شغال الآن':
+over?'تجاوز الوقت المسموح':'متاح';
+}
+
+if(meta){
+meta.innerHTML='المسموح 01:00:00<br>'+
+(over?'تجاوز الوقت':'داخل الوقت');
+}
+});
+}
+
+function render(){
+rollover();
+
+let root=$('employees');
+root.innerHTML='';
+
+state.employees.forEach((e,i)=>{
+let card=document.createElement('section');
+card.className='employee';
+card.dataset.employee=i;
+
+card.innerHTML=`
+<div class="emp-head">
+<div class="name-wrap">
+<div class="avatar">${i+1}</div>
+<div>
+<div class="name"></div>
+<div class="status" data-status></div>
+</div>
+</div>
+
+<div class="employee-menu">
+<button class="menu-trigger" data-menu="${i}" aria-label="خيارات الموظف">⋮</button>
+
+<div class="menu-items" data-menu-items="${i}" hidden>
+<button class="edit" data-edit="${i}">✏️ تعديل الاسم</button>
+<button class="edit" style="color:#ff8b84" data-delete="${i}">🗑 حذف الموظف</button>
+</div>
+</div>
+</div>
+
+<div class="timer-row">
+<div>
+<div class="timer-label">وقت البريك</div>
+<div class="timer" data-timer>00:00:00</div>
+</div>
+<div class="emp-meta" data-meta></div>
+</div>
+
+<div class="actions">
+<button class="btn start" data-toggle="${i}">${e.running?'إيقاف البريك':'بدء البريك'}</button>
+<button class="btn reset" data-reset="${i}">تصفير الوقت</button>
+<button class="btn collect ${e.collected?'done':''}" data-collect="${i}">${e.collected?'تم التحصيل ✓':'تحصيل 50 جنيه'}</button>
+<button class="btn secondary" data-share-employee="${i}">مشاركة الوقت والتأخير</button>
+</div>
+`;
+
+card.querySelector('.name').textContent=e.name;
+root.appendChild(card);
+});
+
+updateLiveUI();
+}
+
+// إغلاق القوائم عند الضغط خارجها فقط
+function closeMenus(){
+document.querySelectorAll('.menu-items').forEach(m=>{
+m.hidden=true;
+});
+}
+
 document.addEventListener('click',ev=>{
 let t=ev.target;
-if(t.dataset.menu!==undefined){let items=document.querySelector(`[data-menu-items="${t.dataset.menu}"]`),open=items.hidden;document.querySelectorAll('.menu-items').forEach(m=>m.hidden=true);items.hidden=!open;return}
-if(!t.closest('.employee-menu'))document.querySelectorAll('.menu-items').forEach(m=>m.hidden=true);
-if(t.dataset.toggle!==undefined){let e=state.employees[+t.dataset.toggle];if(e.running){e.seconds=elapsed(e);e.running=false;e.startedAt=null}else{e.running=true;e.startedAt=Date.now()}save();render()}
-if(t.dataset.reset!==undefined){let e=state.employees[+t.dataset.reset];if(confirm('تصفير وقت البريك والتحصيل؟')){e.seconds=0;e.running=false;e.startedAt=null;e.overrunCharged=false;e.collected=false;state.payments=state.payments.filter(p=>p.name!==e.name);save();render()}}
-if(t.dataset.collect!==undefined){let e=state.employees[+t.dataset.collect];if(!e.collected){e.collected=true;state.payments.push({name:e.name,amount:50,time:new Date().toISOString()});save();render()}else alert('تم التحصيل بالفعل اليوم')}
-if(t.dataset.edit!==undefined){editing=+t.dataset.edit;nameInput.value=state.employees[editing].name;editDialog.showModal()}
-if(t.dataset.delete!==undefined){let i=+t.dataset.delete;if(state.employees.length<=1)return alert('لازم يفضل موظف واحد');if(confirm('متأكد من حذف '+state.employees[i].name+'؟')){state.employees.splice(i,1);save();render()}}
-if(t.dataset.shareEmployee!==undefined){let e=state.employees[+t.dataset.shareEmployee],s=elapsed(e),d=Math.max(0,s-3600);window.open('https://wa.me/?text='+encodeURIComponent('وقت البريك: '+fmt(s)+'\nوقت التأخير: '+fmt(d)),'_blank')}
+
+// فتح وإغلاق قائمة الثلاث نقاط
+let menuBtn=t.closest('[data-menu]');
+if(menuBtn){
+let id=menuBtn.dataset.menu;
+let items=document.querySelector('[data-menu-items="'+id+'"]');
+let wasOpen=items&&!items.hidden;
+
+closeMenus();
+
+if(items)items.hidden=wasOpen;
+return;
+}
+
+// تعديل الاسم
+let editBtn=t.closest('[data-edit]');
+if(editBtn){
+let i=Number(editBtn.dataset.edit);
+closeMenus();
+
+editing=i;
+$('nameInput').value=state.employees[i].name;
+$('editDialog').showModal();
+
+setTimeout(()=>$('nameInput').focus(),100);
+return;
+}
+
+// حذف الموظف
+let deleteBtn=t.closest('[data-delete]');
+if(deleteBtn){
+let i=Number(deleteBtn.dataset.delete);
+closeMenus();
+
+if(state.employees.length<=1){
+alert('لازم يفضل موظف واحد');
+return;
+}
+
+if(confirm('متأكد من حذف '+state.employees[i].name+'؟')){
+state.employees.splice(i,1);
+save();
+render();
+}
+return;
+}
+
+// إغلاق القائمة عند الضغط خارجها
+if(!t.closest('.employee-menu')){
+closeMenus();
+}
+
+// بدء وإيقاف البريك
+let toggle=t.closest('[data-toggle]');
+if(toggle){
+let e=state.employees[+toggle.dataset.toggle];
+
+if(e.running){
+e.seconds=elapsed(e);
+e.running=false;
+e.startedAt=null;
+}else{
+e.running=true;
+e.startedAt=Date.now();
+}
+
+save();
+render();
+return;
+}
+
+// تصفير الوقت والتحصيل
+let reset=t.closest('[data-reset]');
+if(reset){
+let e=state.employees[+reset.dataset.reset];
+
+if(confirm('تصفير وقت البريك والتحصيل؟')){
+e.seconds=0;
+e.running=false;
+e.startedAt=null;
+e.overrunCharged=false;
+e.collected=false;
+
+state.payments=state.payments.filter(p=>p.name!==e.name);
+
+save();
+render();
+}
+return;
+}
+
+// التحصيل
+let collect=t.closest('[data-collect]');
+if(collect){
+let e=state.employees[+collect.dataset.collect];
+
+if(!e.collected){
+e.collected=true;
+state.payments.push({
+name:e.name,
+amount:50,
+time:new Date().toISOString()
 });
-document.getElementById('addEmployee').onclick=()=>{let n=prompt('اسم الموظف الجديد');if(n&&n.trim()){state.employees.push({name:n.trim(),seconds:0,running:false,startedAt:null,collected:false,overrunCharged:false});save();render()}};
+save();
+render();
+}else{
+alert('تم التحصيل بالفعل اليوم');
+}
+return;
+}
+
+// مشاركة وقت الموظف
+let shareEmployee=t.closest('[data-share-employee]');
+if(shareEmployee){
+let e=state.employees[+shareEmployee.dataset.shareEmployee];
+let s=elapsed(e);
+let d=Math.max(0,s-3600);
+
+shareWhatsApp(
+'Hadota cafe 1\n'+
+'الموظف: '+e.name+'\n'+
+'وقت البريك: '+fmt(s)+'\n'+
+'وقت التأخير: '+fmt(d)
+);
+return;
+}
+});
+
+$('addEmployee').onclick=()=>{
+let n=prompt('اسم الموظف الجديد');
+
+if(n&&n.trim()){
+state.employees.push({
+name:n.trim(),
+seconds:0,
+running:false,
+startedAt:null,
+collected:false,
+overrunCharged:false
+});
+save();
+render();
+}
+};
+
 let editing=0;
-document.getElementById('saveName').onclick=()=>{let v=nameInput.value.trim();if(v)state.employees[editing].name=v;save();editDialog.close();render()};
-document.getElementById('cancelName').onclick=()=>editDialog.close();
-document.getElementById('share').onclick=()=>{let total=state.payments.reduce((a,p)=>a+p.amount,0);let msg='Hadota cafe 1\nالتاريخ: '+today()+'\nعدد الموظفين: '+state.employees.length+'\nإجمالي التحصيل: '+total+' جنيه\n'+state.employees.map(e=>e.name+' - '+fmt(elapsed(e))+' - '+(e.collected?'تم التحصيل':'لم يتم التحصيل')).join('\n');window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank')};
-document.getElementById('clear').onclick=()=>{if(confirm('تصفير تقرير اليوم؟')){state.payments=[];state.employees.forEach(e=>e.collected=false);save();render()}};
-document.getElementById('backup').onclick=()=>{let b=new Blob([JSON.stringify({state},null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Hadota_backup.json';a.click();URL.revokeObjectURL(u)};
-document.getElementById('restore').onclick=()=>restoreFile.click();
-document.getElementById('restoreFile').onchange=async ev=>{try{let p=JSON.parse(await ev.target.files[0].text());state=p.state||p;if(!Array.isArray(state.employees)||!Array.isArray(state.payments))throw 0;save();render();alert('تمت الاستعادة')}catch(e){alert('ملف غير صالح')}};
-render();setInterval(render,1000);
+
+$('saveName').onclick=()=>{
+let v=$('nameInput').value.trim();
+
+if(!v){
+alert('اكتب اسم الموظف أولاً');
+$('nameInput').focus();
+return;
+}
+
+state.employees[editing].name=v;
+save();
+$('editDialog').close();
+render();
+};
+
+$('cancelName').onclick=()=>{
+$('editDialog').close();
+};
+
+// استهداف واتساب العادي على أندرويد
+function shareWhatsApp(message){
+let text=encodeURIComponent(message);
+
+let url='intent://send?text='+text+
+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
+
+window.location.href=url;
+}
+
+$('share').onclick=()=>{
+let total=state.payments.reduce((a,p)=>a+p.amount,0);
+
+let msg=
+'Hadota cafe 1\n'+
+'التاريخ: '+today()+'\n'+
+'عدد الموظفين: '+state.employees.length+'\n'+
+'إجمالي التحصيل: '+total+' جنيه\n'+
+state.employees.map(e=>
+e.name+' - '+fmt(elapsed(e))+' - '+
+(e.collected?'تم التحصيل':'لم يتم التحصيل')
+).join('\n');
+
+shareWhatsApp(msg);
+};
+
+$('clear').onclick=()=>{
+if(confirm('تصفير تقرير اليوم؟')){
+state.payments=[];
+state.employees.forEach(e=>e.collected=false);
+save();
+render();
+}
+};
+
+$('backup').onclick=()=>{
+let b=new Blob(
+[JSON.stringify({state},null,2)],
+{type:'application/json'}
+);
+
+let u=URL.createObjectURL(b);
+let a=document.createElement('a');
+
+a.href=u;
+a.download='Hadota_backup.json';
+a.click();
+
+setTimeout(()=>URL.revokeObjectURL(u),1000);
+};
+
+$('restore').onclick=()=>{
+$('restoreFile').click();
+};
+
+$('restoreFile').onchange=async ev=>{
+try{
+if(!ev.target.files[0])return;
+
+let p=JSON.parse(await ev.target.files[0].text());
+let restored=p.state||p;
+
+if(!Array.isArray(restored.employees)||
+!Array.isArray(restored.payments)){
+throw new Error('invalid');
+}
+
+state=restored;
+save();
+render();
+alert('تمت الاستعادة بنجاح');
+ev.target.value='';
+}catch(e){
+alert('ملف غير صالح');
+}
+};
+
+// أول عرض للتطبيق
+render();
+
+// تحديث الوقت فقط كل ثانية بدون إعادة رسم القائمة
+setInterval(updateLiveUI,1000);
+
 </script>
 </body>
 </html>
