@@ -163,23 +163,11 @@ else if(digits.startsWith('0')&&digits.length>=10)digits='2'+digits;
 return digits;
 }
 
-/* مشاركة واتساب العادي من نسخة APK */
-async function shareWhatsAppMessage(message){
-
-const whatsappPlugin=window.Capacitor &&
-window.Capacitor.Plugins &&
-window.Capacitor.Plugins.WhatsApp;
-
-if(whatsappPlugin && typeof whatsappPlugin.share==='function'){
-try{
-await whatsappPlugin.share({text:message});
-}catch(error){
-alert(error && error.message ? error.message : 'تعذر فتح واتساب العادي. تأكد من تثبيته.');
-}
-return;
-}
-
-alert('المشاركة المباشرة متاحة في نسخة APK المحدّثة.');
+/* فتح WhatsApp الأصلي مباشرةً دون WhatsApp Business */
+function shareWhatsAppMessage(message){
+const text=encodeURIComponent(message);
+const intent='intent://send?text='+text+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
+window.location.href=intent;
 }
 
 function render(){
@@ -225,6 +213,7 @@ card.innerHTML=`
 <div class="emp-meta">
 <span>المسموح 01:00:00</span>
 <span>${over?'تجاوز الوقت':'داخل الوقت'}</span>
+${e.running&&e.startedAt?'<span>وقت الخروج: '+new Date(e.startedAt).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'</span>':''}
 </div>
 </div>
 
