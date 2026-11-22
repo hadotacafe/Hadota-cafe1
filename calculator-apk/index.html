@@ -46,7 +46,7 @@ function clearAll(){value='';update()}
 function del(){value=value.slice(0,-1);update()}
 async function equals(){
  if(value==='1990'){value='';update();try{await authenticateVault();document.getElementById('calc').style.display='none';document.getElementById('vault').style.display='block';await refreshFiles()}catch(e){alert('لم يتم فتح الخزنة: '+(e.message||e))}return}
- try{let e=value.replaceAll('×','*').replaceAll('÷','/');if(!/^[0-9+\\-*/%().]+$/.test(e))throw new Error('invalid');if(e)value=String(Function('"use strict";return ('+e+')')());update()}catch(e){value='خطأ';update()}
+ try{let e=value.replaceAll('×','*').replaceAll('÷','/');if(![...e].every(ch=>'0123456789+-*/%().'.includes(ch)))throw new Error('invalid');if(e)value=String(Function('"use strict";return ('+e+')')());update()}catch(e){value='خطأ';update()}
 }
 function vaultPlugin(){const p=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Vault;if(!p)throw new Error('خدمات الخزنة الأصلية غير موجودة في هذه النسخة');return p}
 async function authenticateVault(){return await vaultPlugin().authenticate()}
