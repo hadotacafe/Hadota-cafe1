@@ -47,6 +47,7 @@ jobs:
           import androidx.biometric.BiometricManager;
           import androidx.biometric.BiometricPrompt;
           import androidx.core.content.ContextCompat;
+          import androidx.activity.result.ActivityResult;
           import com.getcapacitor.*;
           import com.getcapacitor.annotation.*;
           import java.io.*;
