@@ -35,6 +35,93 @@ jobs:
           npx cap init "اله حاسبه" "com.hadota.calculator" --web-dir=www
           npx cap add android
           npx cap sync android
+          # Add native biometric + encrypted file vault bridge
+          sed -i '/dependencies {/a\    implementation "androidx.biometric:biometric:1.1.0"' android/app/build.gradle
+          cat > android/app/src/main/java/com/hadota/calculator/VaultPlugin.java <<'JAVA'
+          package com.hadota.calculator;
+          import android.content.Intent;
+          import android.net.Uri;
+          import android.os.Build;
+          import android.security.keystore.KeyGenParameterSpec;
+          import android.security.keystore.KeyProperties;
+          import androidx.biometric.BiometricManager;
+          import androidx.biometric.BiometricPrompt;
+          import androidx.core.content.ContextCompat;
+          import com.getcapacitor.*;
+          import com.getcapacitor.annotation.*;
+          import java.io.*;
+          import java.security.KeyStore;
+          import javax.crypto.*;
+          import javax.crypto.spec.GCMParameterSpec;
+          import org.json.JSONArray;
+          @CapacitorPlugin(name="Vault")
+          public class VaultPlugin extends Plugin {
+            private static final int PICK=7101, SAVE=7102;
+            @PluginMethod public void authenticate(PluginCall call) {
+              int can=BiometricManager.from(getContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
+              if(can!=BiometricManager.BIOMETRIC_SUCCESS){call.reject("البصمة غير متاحة أو غير مسجلة على الجهاز");return;}
+              BiometricPrompt prompt=new BiometricPrompt(getActivity(),ContextCompat.getMainExecutor(getContext()),new BiometricPrompt.AuthenticationCallback(){
+                @Override public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult r){JSObject o=new JSObject();o.put("authenticated",true);call.resolve(o);}
+                @Override public void onAuthenticationError(int c,CharSequence e){call.reject(e.toString());}
+                @Override public void onAuthenticationFailed(){ }
+              });
+              prompt.authenticate(new BiometricPrompt.PromptInfo.Builder().setTitle("فتح الخزنة").setSubtitle("أكد هويتك ببصمة الإصبع").setNegativeButtonText("إلغاء").build());
+            }
+            @PluginMethod public void pickAndEncrypt(PluginCall call) {
+              Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.setType("*/*");i.addCategory(Intent.CATEGORY_OPENABLE);startActivityForResult(call,i,"picked");
+            }
+            @ActivityCallback private void picked(PluginCall call, ActivityResult result) {
+              if(call==null)return;if(result.getResultCode()!=android.app.Activity.RESULT_OK||result.getData()==null){call.reject("لم يتم اختيار ملف");return;}
+              Uri u=result.getData().getData();
+              try(InputStream in=getContext().getContentResolver().openInputStream(u)){
+                byte[] data=readAll(in);Cipher c=Cipher.getInstance("AES/GCM/NoPadding");c.init(Cipher.ENCRYPT_MODE,key());
+                byte[] iv=c.getIV(), enc=c.doFinal(data);
+                String name="file_"+System.currentTimeMillis()+".vault";File dir=new File(getContext().getFilesDir(),"vault");dir.mkdirs();
+                try(FileOutputStream out=new FileOutputStream(new File(dir,name))){out.write(iv);out.write(enc);}
+                JSObject o=new JSObject();o.put("id",name);o.put("name",displayName(u));o.put("size",data.length);call.resolve(o);
+              }catch(Exception e){call.reject("تعذر تشفير الملف: "+e.getMessage());}
+            }
+            @PluginMethod public void listFiles(PluginCall call){
+              JSONArray a=new JSONArray();File d=new File(getContext().getFilesDir(),"vault");File[] fs=d.listFiles();
+              if(fs!=null)for(File x:fs){JSObject o=new JSObject();o.put("id",x.getName());o.put("size",x.length());a.put(o);}
+              JSObject r=new JSObject();r.put("files",a);call.resolve(r);
+            }
+            @PluginMethod public void exportFile(PluginCall call){
+              String id=call.getString("id");if(id==null||id.contains("/")||id.contains("\\\\")){call.reject("ملف غير صالح");return;}
+              Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.setType("application/octet-stream");i.addCategory(Intent.CATEGORY_OPENABLE);i.putExtra(Intent.EXTRA_TITLE,id.replace(".vault",""));
+              call.getData().put("vaultId",id);startActivityForResult(call,i,"savePicked");
+            }
+            @ActivityCallback private void savePicked(PluginCall call, ActivityResult result){
+              if(call==null)return;if(result.getResultCode()!=android.app.Activity.RESULT_OK||result.getData()==null){call.reject("تم إلغاء التصدير");return;}
+              String id=call.getString("vaultId");try{
+                File f=new File(new File(getContext().getFilesDir(),"vault"),id);byte[] all=readAll(new FileInputStream(f));
+                byte[] iv=java.util.Arrays.copyOfRange(all,0,12), enc=java.util.Arrays.copyOfRange(all,12,all.length);
+                Cipher c=Cipher.getInstance("AES/GCM/NoPadding");c.init(Cipher.DECRYPT_MODE,key(),new GCMParameterSpec(128,iv));byte[] plain=c.doFinal(enc);
+                try(OutputStream out=getContext().getContentResolver().openOutputStream(result.getData().getData())){out.write(plain);}
+                call.resolve();
+              }catch(Exception e){call.reject("تعذر فك تشفير الملف: "+e.getMessage());}
+            }
+            private SecretKey key() throws Exception {
+              KeyStore ks=KeyStore.getInstance("AndroidKeyStore");ks.load(null);
+              if(ks.containsAlias("hadota_vault_aes"))return (SecretKey)ks.getKey("hadota_vault_aes",null);
+              KeyGenerator g=KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES,"AndroidKeyStore");
+              g.init(new KeyGenParameterSpec.Builder("hadota_vault_aes",KeyProperties.PURPOSE_ENCRYPT|KeyProperties.PURPOSE_DECRYPT).setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE).setRandomizedEncryptionRequired(true).build());
+              return g.generateKey();
+            }
+            private byte[] readAll(InputStream in)throws Exception{ByteArrayOutputStream b=new ByteArrayOutputStream();byte[] x=new byte[8192];int n;while((n=in.read(x))>0)b.write(x,0,n);return b.toByteArray();}
+            private String displayName(Uri u){String s=u.getLastPathSegment();return s==null?"ملف":s;}
+          }
+          JAVA
+          cat > android/app/src/main/java/com/hadota/calculator/MainActivity.java <<'JAVA'
+          package com.hadota.calculator;
+          import com.getcapacitor.BridgeActivity;
+          public class MainActivity extends BridgeActivity {
+            @Override public void onCreate(android.os.Bundle savedInstanceState) {
+              registerPlugin(VaultPlugin.class);
+              super.onCreate(savedInstanceState);
+            }
+          }
+          JAVA
           sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">اله حاسبه<\/string>/' android/app/src/main/res/values/strings.xml || true
           rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
           for spec in "mdpi 48" "hdpi 72" "xhdpi 96" "xxhdpi 144" "xxxhdpi 192"; do
