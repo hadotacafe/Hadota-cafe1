@@ -37,17 +37,21 @@ h2{color:#d0b274}.sub,.note{color:#999;font-size:12px;line-height:1.8}
 <button class="key" onclick="put('1')">1</button><button class="key" onclick="put('2')">2</button><button class="key" onclick="put('3')">3</button><button class="key op" onclick="put('+')">+</button>
 <button class="key" onclick="put('(')">(</button><button class="key" onclick="put('0')">0</button><button class="key" onclick="put('.')">.</button><button class="key equal" onclick="equals()">=</button>
 </div></main>
-<section id="vault"><div class="brand"><b>HADOTA VAULT</b><p class="sub">مساحة التطبيقات الخاصة</p></div><h2>الخزنة السرية</h2><p class="sub">حدد التطبيقات التي تريد إضافتها لمساحتك الخاصة</p><div class="apps">
-<div class="app" onclick="this.classList.toggle('selected')"><div class="ico">▶️</div><small>Google Play</small></div><div class="app" onclick="this.classList.toggle('selected')"><div class="ico">💬</div><small>WhatsApp</small></div><div class="app" onclick="this.classList.toggle('selected')"><div class="ico">📷</div><small>Instagram</small></div><div class="app" onclick="this.classList.toggle('selected')"><div class="ico">✉️</div><small>Gmail</small></div><div class="app" onclick="this.classList.toggle('selected')"><div class="ico">🌐</div><small>Chrome</small></div><div class="app" onclick="this.classList.toggle('selected')"><div class="ico">▶</div><small>YouTube</small></div></div><p class="note">واجهة تجريبية؛ تحديد التطبيقات هنا لا يخفيها من نظام أندرويد.</p><button class="lock" onclick="lockVault()">قفل والعودة للآلة الحاسبة</button></section>
+<section id="vault"><div class="brand"><b>HADOTA VAULT</b><p class="sub">خزنة ملفات مشفّرة على الجهاز</p></div><h2>الخزنة السرية</h2><p class="sub">افتح الخزنة بالبصمة، ثم أضف ملفاتك. الملفات تُشفّر داخل مساحة التطبيق.</p><div style="display:grid;gap:12px;margin-top:22px"><button class="lock" style="position:static" onclick="addFile()">＋ إضافة ملف وتشفيره</button><button class="lock" style="position:static;background:#333;color:#fff" onclick="refreshFiles()">تحديث الملفات</button></div><div id="files" style="margin-top:20px"></div><p class="note">التشفير AES-GCM ومفتاحه محفوظ في Android Keystore. حذف التطبيق أو بياناته قد يفقد الملفات نهائيًا؛ صدّر نسخة من ملفاتك المهمة.</p><button class="lock" onclick="lockVault()">قفل والعودة للآلة الحاسبة</button></section>
 <script>
 let value='';
 function update(){document.getElementById('display').textContent=value||'0'}
 function put(x){if(value==='خطأ')value='';value+=x;update()}
 function clearAll(){value='';update()}
 function del(){value=value.slice(0,-1);update()}
-function equals(){
- if(value==='1990'){document.getElementById('calc').style.display='none';document.getElementById('vault').style.display='block';value='';update();return}
- try{let e=value.replaceAll('×','*').replaceAll('÷','/').replace(/[^0-9+\-*\/%().]/g,'');if(e)value=String(Function('"use strict";return ('+e+')')());update()}catch(e){value='خطأ';update()}
+async function equals(){
+ if(value==='1990'){value='';update();try{await authenticateVault();document.getElementById('calc').style.display='none';document.getElementById('vault').style.display='block';await refreshFiles()}catch(e){alert('لم يتم فتح الخزنة: '+(e.message||e))}return}
+ try{let e=value.replaceAll('×','*').replaceAll('÷','/').replace(/[^0-9+\\-*\\/%().]/g,'');if(e)value=String(Function('"use strict";return ('+e+')')());update()}catch(e){value='خطأ';update()}
 }
+function vaultPlugin(){const p=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Vault;if(!p)throw new Error('خدمات الخزنة الأصلية غير موجودة في هذه النسخة');return p}
+async function authenticateVault(){return await vaultPlugin().authenticate()}
+async function addFile(){try{await authenticateVault();await vaultPlugin().pickAndEncrypt();alert('تم تشفير الملف وحفظه داخل الخزنة');await refreshFiles()}catch(e){alert('تعذر إضافة الملف: '+(e.message||e))}}
+async function refreshFiles(){try{const r=await vaultPlugin().listFiles();const el=document.getElementById('files');el.innerHTML='';(r.files||[]).forEach(f=>{const row=document.createElement('div');row.style.cssText='background:#171717;border:1px solid #333;border-radius:12px;padding:12px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:8px';const label=document.createElement('span');label.textContent=f.id+' · '+Math.max(1,Math.round(f.size/1024))+' KB';const b=document.createElement('button');b.textContent='تصدير';b.style.cssText='padding:9px 12px;border:0;border-radius:8px;background:#c9a45c;color:#111';b.onclick=async()=>{try{await authenticateVault();await vaultPlugin().exportFile({id:f.id});alert('تم تصدير الملف بعد فك تشفيره')}catch(e){alert('فشل التصدير: '+(e.message||e))}};row.append(label,b);el.append(row)});if(!(r.files||[]).length)el.textContent='لا توجد ملفات محفوظة بعد.'}catch(e){document.getElementById('files').textContent='تعذر تحميل الملفات: '+(e.message||e)}}
 function lockVault(){document.getElementById('vault').style.display='none';document.getElementById('calc').style.display='flex';clearAll()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&document.getElementById('vault').style.display==='block')lockVault()});
 </script></body></html>
