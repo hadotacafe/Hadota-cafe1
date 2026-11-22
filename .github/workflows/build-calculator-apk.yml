@@ -34,6 +34,13 @@ jobs:
           npx cap add android
           npx cap sync android
           sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">اله حاسبه<\/string>/' android/app/src/main/res/values/strings.xml || true
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          for spec in "mdpi 48" "hdpi 72" "xhdpi 96" "xxhdpi 144" "xxxhdpi 192"; do
+            set -- $spec
+            mkdir -p android/app/src/main/res/mipmap-$1
+            convert ../calculator-apk/calculator-icon.svg -resize $2x$2 android/app/src/main/res/mipmap-$1/ic_launcher.png
+            cp android/app/src/main/res/mipmap-$1/ic_launcher.png android/app/src/main/res/mipmap-$1/ic_launcher_round.png
+          done
       - name: Build debug APK
         run: |
           cd appbuild/android
