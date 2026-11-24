@@ -459,9 +459,7 @@ let paid=state.payments.reduce((a,p)=>a+p.amount,0);
 document.getElementById('count').textContent=state.employees.length;
 document.getElementById('active').textContent=active;
 document.getElementById('paid').textContent=paid;
-document.getElementById('payments').textContent=state.payments.length;
-document.getElementById('total').textContent=paid;
-document.getElementById('remaining').textContent='0 جنيه';
+// The daily totals panel was intentionally removed; no hidden DOM fields are required.
 }
 
 document.addEventListener('click',ev=>{
