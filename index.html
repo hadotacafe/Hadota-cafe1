@@ -158,6 +158,31 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
  .timer-row{padding:10px}
  .emp-meta{gap:7px}
 }
+
+/* Premium typography and top controls */
+.head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.reset-all{
+ background:linear-gradient(135deg,#3b2d20,#241f1a);
+ color:#f1d49a;border:1px solid #a8864d;
+ box-shadow:0 4px 14px #0004,inset 0 1px #ffffff12;
+}
+.reset-all:active{filter:brightness(1.15)}
+.section-head h2{font-size:20px;letter-spacing:-.25px}
+.hint{font-size:12px;line-height:1.8;font-weight:500;color:#c3c8d0}
+.name{font-size:16px;line-height:1.5;letter-spacing:-.2px}
+.status,.timer-label{font-size:12px;line-height:1.7;font-weight:500;color:#c0c7d1}
+.emp-meta{font-size:12px;line-height:1.8;font-weight:500;color:#c5cbd4}
+.stat span{font-size:12px;line-height:1.7;font-weight:500}
+.report-line{font-size:13px;line-height:1.9;color:#e4e0d7}
+.note{font-size:12px;line-height:1.9;color:#c0c6cf}
+.btn,.primary,.secondary{letter-spacing:0;font-weight:700;line-height:1.65}
+.phone-chat{font-size:11px;font-weight:600;letter-spacing:.15px}
+@media(max-width:430px){
+ .section-head{align-items:flex-start;gap:8px}
+ .head-actions{justify-content:flex-end;gap:6px}
+ .head-actions .btn{font-size:11px;padding:10px 8px;white-space:nowrap}
+ .section-head h2{font-size:18px;padding-top:5px}
+}
 </style>
 </head>
 <body>
@@ -170,7 +195,7 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
 <div class="stat"><strong id="active">0</strong><span>بريك شغال</span></div>
 <div class="stat"><strong id="paid">0</strong><span>تحصيل اليوم (جنيه)</span></div>
 </div>
-<div class="section-head"><h2>الموظفون</h2><button class="btn start" id="addEmployee">+ إضافة موظف</button></div>
+<div class="section-head"><h2>الموظفون</h2><div class="head-actions"><button class="btn reset-all" id="resetAll">تصفير الكل</button><button class="btn start" id="addEmployee">+ إضافة موظف</button></div></div>
 <div class="hint" style="margin:-4px 2px 10px">الوقت المسموح: 60 دقيقة لكل موظف</div>
 <div class="employees" id="employees"></div>
 <div class="panel">
@@ -480,6 +505,20 @@ shareWhatsAppMessage(message);
 
 let editing=0;
 
+document.getElementById('resetAll').onclick=()=>{
+if(!confirm('تأكيد تصفير الكل؟ سيتم تصفير أوقات البريك وإيقاف المؤقتات ومسح تحصيلات اليوم فقط. ستظل أسماء الموظفين وأرقامهم محفوظة.'))return;
+state.payments=[];
+state.employees.forEach(e=>{
+ e.seconds=0;
+ e.running=false;
+ e.startedAt=null;
+ e.collected=false;
+ e.overrunCharged=false;
+});
+save();
+render();
+};
+ 
 document.getElementById('addEmployee').onclick=()=>{
 
 let name=prompt('اكتب اسم الموظف الجديد:');
