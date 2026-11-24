@@ -183,6 +183,19 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
  .head-actions .btn{font-size:11px;padding:10px 8px;white-space:nowrap}
  .section-head h2{font-size:18px;padding-top:5px}
 }
+
+/* Break Hadota — refined Arabic typography */
+body{font-family:'Alexandria',Tahoma,Arial,sans-serif;font-size:15px;line-height:1.75;font-weight:500}
+.brand{font-family:'Alexandria',Tahoma,sans-serif;font-size:clamp(26px,6vw,34px);font-weight:800;letter-spacing:0}
+.sub{font-size:14px;font-weight:500;line-height:1.8}
+.section-head h2,.panel h3{font-size:20px;font-weight:800;letter-spacing:-.35px}
+.name{font-size:17px;font-weight:700;line-height:1.65}
+.status,.hint,.timer-label,.emp-meta{font-size:12px;font-weight:500;line-height:1.9}
+.btn,.primary,.secondary{font-size:13px;font-weight:700;line-height:1.8}
+.stat span{font-size:12px;font-weight:600;line-height:1.8}
+.note{font-size:12px;line-height:2}
+.backup-panel{margin-top:22px}
+@media(max-width:390px){body{font-size:14px}.name{font-size:16px}.btn,.primary,.secondary{font-size:12px}}
 </style>
 </head>
 <body>
@@ -198,15 +211,11 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
 <div class="section-head"><h2>الموظفون</h2><div class="head-actions"><button class="btn reset-all" id="resetAll">تصفير الكل</button><button class="btn start" id="addEmployee">+ إضافة موظف</button></div></div>
 <div class="hint" style="margin:-4px 2px 10px">الوقت المسموح: 60 دقيقة لكل موظف</div>
 <div class="employees" id="employees"></div>
-<div class="panel">
-<h3>ملخص تحصيل اليوم</h3>
-<div class="report-line"><span>عدد مرات التحصيل</span><strong id="payments">0</strong></div>
-<div class="report-line"><span>إجمالي المبلغ المحصل</span><strong><span id="total">0</span> جنيه</strong></div>
-<div class="report-line"><span>المتبقي من التحصيلات المسجلة</span><strong id="remaining">0 جنيه</strong></div>
-<div class="report-actions"><button class="primary" id="share">مشاركة تقرير اليوم</button><button class="secondary" id="clear">تصفير تقرير اليوم</button></div>
+<div class="panel backup-panel">
+<h3>النسخ الاحتياطي</h3>
 <div class="report-actions"><button class="secondary" id="backup">تنزيل نسخة احتياطية</button><button class="secondary" id="restore">استعادة نسخة احتياطية</button></div>
 <input id="restoreFile" type="file" accept="application/json,.json" hidden>
-<p class="note">الحفظ التلقائي يعمل على هذا الجهاز. احتفظ بنسخة احتياطية عند تغيير الهاتف أو حذف بيانات المتصفح.</p>
+<p class="note">احتفظ بنسخة احتياطية من بيانات الموظفين عند تغيير الهاتف أو المتصفح.</p>
 </div>
 <p class="note">البيانات محفوظة على نفس الجهاز. زر «تحصيل 50 جنيه» يسجل تحصيلًا واحدًا للموظف في اليوم.</p>
 </main>
@@ -565,7 +574,7 @@ document.getElementById('editDialog').close();
 };
 
 /* مشاركة التقرير اليومي */
-document.getElementById('share').onclick=()=>{
+document.getElementById('share')?.addEventListener('click',()=>{
 
 const total=state.payments.reduce((a,p)=>a+p.amount,0);
 const paidCount=state.employees.filter(e=>e.collected).length;
@@ -607,9 +616,9 @@ lines.push(
 );
 
 shareWhatsAppMessage(lines.join('\n'));
-};
+});
 
-document.getElementById('clear').onclick=()=>{
+document.getElementById('clear')?.addEventListener('click',()=>{
 
 if(confirm('متأكد من تصفير تقرير اليوم؟')){
 
@@ -619,7 +628,7 @@ state.employees.forEach(e=>e.collected=false);
 save();
 render();
 }
-};
+});
 
 document.getElementById('backup').onclick=()=>{
 
