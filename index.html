@@ -200,6 +200,24 @@ body{font-family:'Alexandria',Tahoma,Arial,sans-serif;font-size:15px;line-height
 .backup-panel{margin-top:22px}
 @media(max-width:390px){body{font-size:14px}.name{font-size:16px}.btn,.primary,.secondary{font-size:12px}}
 
+/* Compact and equal employee action buttons */
+.employee .actions{gap:6px}
+.employee .actions .btn{
+ min-height:64px!important;
+ height:64px!important;
+ padding:7px 5px!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ text-align:center!important;
+ font-size:12px!important;
+ line-height:1.45!important;
+ border-radius:12px!important;
+}
+@media(max-width:390px){
+ .employee .actions .btn{min-height:60px!important;height:60px!important;font-size:11px!important}
+}
+
 /* Compact summary cards — final override */
 .summary{gap:5px;margin:0 0 12px}
 .summary .stat{
@@ -298,7 +316,16 @@ localStorage.setItem(KEY,JSON.stringify(state));
 }
 
 function elapsed(e){
-return e.seconds+(e.running&&e.startedAt?Math.floor((Date.now()-e.startedAt)/1000):0);
+const base=Number(e.seconds)||0;
+if(!e.running)return base;
+let started=Number(e.startedAt);
+if(!Number.isFinite(started)||started<=0)started=Date.parse(e.startedAt);
+if(!Number.isFinite(started)||started<=0){
+started=Date.now();
+e.startedAt=started;
+save();
+}
+return base+Math.max(0,Math.floor((Date.now()-started)/1000));
 }
 
 function fmt(s){
