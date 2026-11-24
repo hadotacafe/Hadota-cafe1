@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101715">
-<title>Hadota cafe 1</title>
+<title>بريك حدوته</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
 
@@ -187,7 +187,7 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
 </head>
 <body>
 <header>
-<div class="top"><div><div class="brand">Hadota cafe 1</div><div class="sub">إدارة البريكات والتحصيل</div></div></div>
+<div class="top"><div><div class="brand">بريك حدوته</div><div class="sub">إدارة البريكات والتحصيل</div></div></div>
 </header>
 <main>
 <div class="summary">
@@ -210,7 +210,7 @@ button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
 </div>
 <p class="note">البيانات محفوظة على نفس الجهاز. زر «تحصيل 50 جنيه» يسجل تحصيلًا واحدًا للموظف في اليوم.</p>
 </main>
-<footer>Hadota cafe 1</footer>
+<footer>بريك حدوته</footer>
 
 <dialog id="editDialog">
 <h3>تعديل بيانات الموظف</h3>
@@ -572,7 +572,7 @@ const paidCount=state.employees.filter(e=>e.collected).length;
 const pending=state.employees.length-paidCount;
 
 let lines=[
-'☕ *Hadota cafe 1*',
+'☕ *بريك حدوته*',
 '━━━━━━━━━━━━━━',
 '📊 *ملخص متابعة البريكات والتحصيل*',
 '📅 التاريخ: '+today(),
@@ -603,7 +603,7 @@ lines.push(
 lines.push(
 '',
 '━━━━━━━━━━━━━━',
-'*ربنا يوفقكم، إدارة Hadota cafe 1*'
+'*ربنا يوفقكم، إدارة بريك حدوته*'
 );
 
 shareWhatsAppMessage(lines.join('\n'));
@@ -624,7 +624,7 @@ render();
 document.getElementById('backup').onclick=()=>{
 
 const payload={
-app:'Hadota cafe 1',
+app:'بريك حدوته',
 version:1,
 createdAt:new Date().toISOString(),
 state
