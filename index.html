@@ -61,6 +61,102 @@ dialog::backdrop{background:#000a}
 dialog h3{margin:0 0 12px}
 input{background:#111a16;color:var(--ink);width:100%;padding:12px;border:1px solid #3a4a40;border-radius:10px;font:inherit;margin:8px 0 12px}
 @media(min-width:620px){.employees{display:grid;grid-template-columns:1fr 1fr;gap:10px}.employee{margin:0}.section-head{margin-top:22px}}
+
+/* HADOTA GOLD PREMIUM THEME — visual-only overrides */
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+:root{
+ --bg:#0b1421;--card:#142235;--ink:#f5f0e5;--muted:#b8bdc8;
+ --green:#cda65c;--gold:#f0d18b;--red:#ff8278;--line:#34465b;--goldline:#9b7842;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{
+ background:radial-gradient(ellipse at top right,#1b2938 0,#0b1420 48%,#080f19 100%);
+ color:var(--ink);font-family:'Alexandria',Tahoma,Arial,sans-serif;
+ letter-spacing:0;line-height:1.65;
+}
+header{
+ background:linear-gradient(125deg,#0b1420 0%,#172638 58%,#302719 100%);
+ color:#fff8e9;border-bottom:1px solid var(--goldline);
+ box-shadow:0 12px 34px #0006;padding:28px 18px 25px;
+}
+.brand{font-family:'Playfair Display','Alexandria',serif;font-size:clamp(24px,5vw,31px);font-weight:800;letter-spacing:.25px;color:#fff1d0;text-shadow:0 2px 16px #d8b36b35}
+.sub{color:#c9c4ba;font-size:14px}
+main{max-width:820px;padding:20px 14px 42px}
+.summary{gap:10px;margin:0 0 22px}
+.stat{
+ background:linear-gradient(155deg,#1b2b3e,#111d2c);
+ border:1px solid #39495d;border-radius:18px;padding:15px 8px;
+ box-shadow:inset 0 1px #ffffff0b,0 8px 20px #0003;
+}
+.stat strong{font-size:clamp(23px,5vw,29px);color:var(--gold);font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.section-head{margin:22px 2px 12px}
+.section-head h2,.panel h3{color:#f4dfb2;font-size:19px;font-weight:700}
+.hint,.note{color:#b9c0ca}
+.employee{
+ background:linear-gradient(150deg,#192a3d,#111e2d);
+ border:1px solid #3a4b60;border-radius:20px;padding:15px;
+ box-shadow:inset 0 1px #ffffff0b,0 9px 24px #0004;
+}
+.avatar{
+ background:linear-gradient(145deg,#f1d797,#b98b3f);color:#172131;
+ border:1px solid #f5dfa9;border-radius:13px;font-weight:800;
+ box-shadow:0 4px 14px #d3a64b25;
+}
+.name{font-size:16px;color:#fff4dc;font-weight:700}
+.status{color:#bdc4ce}
+.phone-chat{
+ background:#26354a;border-color:#8b7043;color:#f1d797;
+ font-family:Arial,sans-serif;
+}
+.menu-trigger{
+ background:#26364a;color:#f0d18b;border:1px solid #46566b;
+}
+.menu-items{background:#172638;border-color:#8b7043}
+.edit{background:#22344a;color:#f4e8ce;border:1px solid #46566b}
+.timer-row{
+ background:linear-gradient(120deg,#1c2c40,#152437);
+ border:1px solid #34485f;border-radius:15px;
+}
+.timer-label,.emp-meta{color:#bdc4ce}
+.timer{color:#f2d99f;font-size:clamp(27px,6vw,34px);font-weight:800}
+.timer.over{color:var(--red)}
+.btn{
+ border-radius:12px;padding:12px 8px;font-size:13px;font-weight:700;
+ transition:filter .15s ease,transform .15s ease;
+}
+.btn:active,.primary:active,.secondary:active{transform:scale(.985);filter:brightness(1.08)}
+.start,.primary{
+ background:linear-gradient(120deg,#f2d99d,#c99a4b);color:#172131;
+ border:1px solid #f5dfaa;box-shadow:0 5px 16px #c99a4b20;
+}
+.reset,.secondary{
+ background:#26374c;color:#f0e4ca;border:1px solid #40536b;
+}
+.collect{
+ background:linear-gradient(120deg,#47391f,#332817);color:#f5d992;
+ border:1px solid #987746;
+}
+.collect.done{background:#1d3b32;color:#c5e7d5;border-color:#668e76}
+.panel{
+ background:linear-gradient(150deg,#192a3d,#111e2d);
+ border:1px solid #3a4b60;border-radius:19px;padding:16px;
+ box-shadow:0 8px 22px #0003;
+}
+.report-line{border-color:#35465a}
+footer{color:#a7acb5}
+dialog{background:#172638;border:1px solid #927747;color:var(--ink)}
+input{background:#0f1a28;border-color:#536176;color:var(--ink);font-family:'Alexandria',Tahoma,sans-serif}
+button,input{font-family:'Alexandria',Tahoma,Arial,sans-serif}
+@media(max-width:390px){
+ main{padding-inline:11px}
+ .employee{padding:12px}
+ .actions{gap:6px}
+ .btn{font-size:11px;padding:11px 4px}
+ .timer-row{padding:10px}
+ .emp-meta{gap:7px}
+}
 </style>
 </head>
 <body>
