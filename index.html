@@ -295,9 +295,14 @@ return digits;
 }
 
 /* فتح WhatsApp الأصلي مباشرةً دون WhatsApp Business */
-function shareWhatsAppMessage(message){
+function shareWhatsAppMessage(message,phone){
+const digits=normalizePhone(phone);
+if(!digits){
+alert('أضف رقم واتساب الموظف من قائمة تعديل بيانات الموظف أولاً.');
+return;
+}
 const text=encodeURIComponent(message);
-const intent='intent://send?text='+text+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
+const intent='intent://send?phone='+digits+'&text='+text+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
 window.location.href=intent;
 }
 
@@ -507,7 +512,7 @@ let message=
 'وقت التأخير المستحق للخصم: '+fmt(delay)+'\n'+
 (e.collected?'تم تسجيل تحصيل 50 جنيه':'لم يتم تسجيل تحصيل 50 جنيه');
 
-shareWhatsAppMessage(message);
+shareWhatsAppMessage(message,e.phone);
 }
 
 });
