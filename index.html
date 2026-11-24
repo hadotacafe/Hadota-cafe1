@@ -573,63 +573,6 @@ document.getElementById('cancelName').onclick=()=>{
 document.getElementById('editDialog').close();
 };
 
-/* مشاركة التقرير اليومي */
-document.getElementById('share')?.addEventListener('click',()=>{
-
-const total=state.payments.reduce((a,p)=>a+p.amount,0);
-const paidCount=state.employees.filter(e=>e.collected).length;
-const pending=state.employees.length-paidCount;
-
-let lines=[
-'☕ *بريك حدوته*',
-'━━━━━━━━━━━━━━',
-'📊 *ملخص متابعة البريكات والتحصيل*',
-'📅 التاريخ: '+today(),
-'',
-'👥 عدد الموظفين: '+state.employees.length,
-'✅ تم التحصيل من: '+paidCount+' موظف',
-'⏳ لسه التحصيل من: '+pending+' موظف',
-'💵 إجمالي اللي اتحصل: *'+total+' جنيه*',
-'',
-'🧾 *تفاصيل الموظفين*'
-];
-
-state.employees.forEach((e,i)=>{
-
-const sec=elapsed(e);
-const delay=Math.max(0,sec-3600);
-
-lines.push(
-'',
-'*'+(i+1)+'. '+e.name+'*',
-'⏱️ وقت البريك: '+fmt(sec),
-'⚠️ وقت التأخير: '+fmt(delay),
-'💰 '+(e.collected?'تم تحصيل 50 جنيه':'لسه ما اتحصلش 50 جنيه')
-);
-
-});
-
-lines.push(
-'',
-'━━━━━━━━━━━━━━',
-'*ربنا يوفقكم، إدارة بريك حدوته*'
-);
-
-shareWhatsAppMessage(lines.join('\n'));
-});
-
-document.getElementById('clear')?.addEventListener('click',()=>{
-
-if(confirm('متأكد من تصفير تقرير اليوم؟')){
-
-state.payments=[];
-state.employees.forEach(e=>e.collected=false);
-
-save();
-render();
-}
-});
-
 document.getElementById('backup').onclick=()=>{
 
 const payload={
