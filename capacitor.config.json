@@ -1,0 +1,9 @@
+{
+  "appId": "com.hadotacafe.break",
+  "appName": "بريك حدوته",
+  "webDir": "www",
+  "backgroundColor": "#0b1421",
+  "android": {
+    "allowMixedContent": false
+  }
+}
